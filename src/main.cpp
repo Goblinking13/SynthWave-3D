@@ -1,11 +1,9 @@
 #define DB_PERLIN_IMPL
 #include<iostream>
 #include<chrono>
-#include<thread>
 #include<vector>
 #include"vec3.hpp"
 #include"render.hpp"
-#include<SDL2/SDL.h>
 #include"obj.hpp"
 #include"db_perlin.hpp"
 #include<time.h>
@@ -16,11 +14,10 @@
 #include<SDL.h>
 #endif
 
-
 SDL_Window* win;
 SDL_Renderer *rendrr;
 
-const static int WIDTH = 1000;
+const static int WIDTH = 800;
 const static int HEIGHT = 600;
 
 void kill();
@@ -68,12 +65,13 @@ int main()
   object mountaince;
 
 
-  mountaince.moveZ(0);
-  mountaince.moveY(15);
+  mountaince.moveZ(3);
+  mountaince.moveY(12);
 
 
   for(int x = 0; x < n-1;x++)
   {
+    
     for(int z = 0 ; z < n-1;z++)
     {
       mountaince.addPoly(mesh[x+ z*n],mesh[x+1+ z*n],mesh[x+1+ (z+1)*n]  );
@@ -92,8 +90,8 @@ int main()
   double move = 0;
   double moveX = 0;
 
-
-
+  int moveStep = 5, step  =5;
+  moveStep = step = 1;
 
   while( quit == false )
   {
@@ -103,19 +101,28 @@ int main()
     SDL_SetRenderDrawColor(rendrr, 36, 36, 43, 100);
     SDL_RenderClear(rendrr);
 
-
+    
     while( SDL_PollEvent( &e ) )
-    { if( e.type == SDL_QUIT ) quit = true;
-    }
-
-
+    { if( e.type == SDL_QUIT ) quit = true;}
+    
+    
     drawSun(rendrr, WIDTH/2, HEIGHT/4, 75, 50);
 
     SDL_SetRenderDrawColor( rendrr, 30, 79, 201, 255 );
 
     drawWireFrame(rendrr, mountaince, WIDTH, HEIGHT, {30, 79, 201, 255});
 
-    SDL_RenderPresent(rendrr);
+    SDL_Delay(50);
+    mountaince.moveZ(-0.1f);
+    
+    if(mountaince.getCordZ() <= 0.1)
+    {
+    
+      mountaince.setCordZ(3.0f);
+      move += 3.0f;
+    }else
+      SDL_RenderPresent(rendrr);
+
 
     for(polygon& pol : mountaince.mesh)
     {
@@ -164,9 +171,6 @@ int main()
 
     std::string str =  "waves FPS: " + std::to_string(fps);
     SDL_SetWindowTitle(win, str.c_str());
-    move+= 0.01f;
-
-    std::this_thread::sleep_for(std::chrono::milliseconds() );
   }
 //42
   kill();
@@ -215,5 +219,6 @@ bool init()
 
   return true;
 }
+
 
 

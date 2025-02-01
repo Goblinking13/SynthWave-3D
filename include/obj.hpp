@@ -211,6 +211,18 @@ public:
  
   }
   
+  double getCordZ()
+  {
+    return obj2Wld[2][3];
+  }
+  
+  void setCordZ(double n)
+  {
+    obj2Wld[2][3] = n;
+  }
+  
 };
+
+
 
 
